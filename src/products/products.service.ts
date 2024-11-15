@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
@@ -34,16 +39,16 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
         page,
         lastPage,
       },
-    }
+    };
   }
 
   async findOne(id: number) {
     // return this.product.findUnique({ where: { id } });
-    const product = await this.product.findFirst({ 
-      where: { id, available: true }, 
+    const product = await this.product.findFirst({
+      where: { id, available: true },
     });
 
-    if(!product) {
+    if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
 
@@ -51,10 +56,13 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const { id: __, ...data } = updateProductDto;
+
     await this.findOne(id);
-    return this.product.update({ 
-      where: { id }, 
-      data: updateProductDto }); 
+    return this.product.update({
+      where: { id },
+      data: data,
+    });
   }
 
   async remove(id: number) {
@@ -63,7 +71,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     const product = await this.product.update({
       where: { id },
       data: { available: false },
-    })
+    });
 
     return product;
   }
